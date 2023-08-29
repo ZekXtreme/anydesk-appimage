@@ -12,19 +12,32 @@ on:
 jobs:
   AppImage:
     runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        descriptor: ["Anydesk"]
+        include:
+          - descriptor: "Anydesk"
     steps:
     - name: Create AppImage
+      id: appimage-build
       run: |
            sudo apt-get -y install desktop-file-utils
            wget "https://raw.githubusercontent.com/AppImage/pkg2appimage/master/pkg2appimage"
            bash -ex pkg2appimage Anydesk
     - name: Release
-      uses: marvinpinto/action-automatic-releases@latest
+      # uses: marvinpinto/action-automatic-releases@latest
+      # with:
+      #   title: AppImage
+      #   automatic_release_tag: stable
+      #   prerelease: false
+      #   draft: false
+      #   files: |
+      #     out/*.AppImage*
+      #   repo_token: ${{ github.token }}
+      uses: softprops/action-gh-release@v1
       with:
-        title: AppImage
-        automatic_release_tag: stable
-        prerelease: false
-        draft: false
-        files: |
-          out/*.AppImage*
-        repo_token: ${{ github.token }}
+          body: See Releases
+          name: Appimage ${{ matrix.descriptor }} Build ${{ steps.appimage-build.outputs.TIMESTAMP }}
+          tag_name: ${{ matrix.descriptor }}-${{ steps.appimage-build.outputs.TIMESTAMP }}
+          files: |
+            out/*.AppImage*
