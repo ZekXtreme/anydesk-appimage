@@ -1,5 +1,8 @@
 name: Appimage-Release
 
+permissions:
+  contents: write
+
 on:
   push:
     branches: [ main ]
@@ -21,7 +24,6 @@ jobs:
     - name: Create AppImage
       id: appimage-build
       run: |
-           sudo apt-get -y install desktop-file-utils
            wget "https://raw.githubusercontent.com/AppImage/pkg2appimage/master/pkg2appimage"
            bash -ex pkg2appimage Anydesk
     - name: Release
